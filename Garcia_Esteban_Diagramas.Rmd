@@ -1,0 +1,321 @@
+---
+title: '**PEC2: Estudio de técnicas de visualización de datos**'
+author: "Autor: Javier García Esteban"
+date: "Visualización de datos - Semestre 2023.2"
+output:
+  html_document:
+    number_sections: yes
+    theme: cosmo
+    toc: yes
+    toc_depth: 3
+    includes:
+      in_header: M2.891-Actividad1-header.html
+  word_document: default
+  pdf_document:
+    toc: true
+    toc_depth: 3
+    number_sections: true
+    highlight: default
+    latex_engine: xelatex
+header-includes:
+  - \renewcommand{\contentsname}{Índice}      
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(eval=T, echo=T, message = FALSE, warning = FALSE)
+```
+
+\newpage
+
+# Introducción {.unnumbered}
+
+En esta actividad deberéis crear tres pequeñas visualizaciones usando técnicas diferentes que os serán asignadas, recibiréis un correo de vuestro profesor con la selección. Cada estudiante tendrá que escoger unos datos idóneos para cada una de las técnicas propuestas y decidir con qué software los crea. Los datos se podrán elegir de cualquier fuente de datos abierta. El estudiante publicará las representaciones en Internet y las presentará en un vídeo.
+
+Para publicar las representaciones os recordamos que es necesario que estas sean accesibles directamente con una URL, sin necesidad de registros ni inicios de sesión. Esto tanto se puede hacer en la misma plataforma donde se ha desarrollado la representación (Flourish, Tableau Public, Infogram, etc), como en un espacio gratuito como github, donde puede crear un proyecto y publicar las representaciones en formato web en github.io, por ejemplo how to github.Links to an external site.
+
+Se trata de familiarizarse con técnicas de visualización y entender la esencia. De hecho, en lugar de ir de los datos a la visualización, en esta actividad lo hacemos a la inversa, es decir, a partir de cada técnica tenemos que ver para qué tipo de datos es adecuado y buscar un conjunto de datos que sea coherente, si puede ser sin tener que hacer ninguna transformación en los datos (para ahorraros trabajo). 
+
+En esta actividad hay que publicar las tres técnicas y un video explicativo que sigue el guion siguiente:
+
+1. [Puntos 1 + 2] Presentaos siguiendo el esquema de la PEC 1. 
+2. [Puntos 1 + 2] [5%] Indicad donde está colgada la visualización para poder acceder.
+3. [30%] Definid cada técnica de visualización de forma general: nombre, origen, descripción/funcionamiento, ejemplos de aplicación, etc.
+4. [10%] Describid el tipo de datos que se pueden representar con cada técnica ¿(datos cuantitativos, cualitativos? ¿Qué estructura tienen  que tener para cada técnica?). Explicad las limitaciones en cuanto a datos (¿hay medida mínima y máxima del juego de datos para cada técnica?).
+5. [20%] Haced una representación con cada una de las técnicas usando un conjunto de datos abiertos (más abajo disponéis de algunas fuentes de datos abiertos). En total hay que hacer 3 representaciones simples con 3 conjuntos de datos escogidos por el estudiante.
+6. [30%] Comentad brevemente las tres representaciones indicando qué se representa y qué o qué aspectos muestra o demuestra cada representación.
+7. [5%] Cada una de las tres presentaciones tienen que tener una duración de unos 2-3 minutos. En total, el video (único) con las tres técnicas no puede exceder los 7 minutos. Se penalizará salir de este rango, porque se valora la capacidad de síntesis y de comunicación.  
+
+******
+# - Connected Scatterplot
+
+En este apartado vamos a hablar del 
+
+## - Cargar el archivo de datos y librerías
+
+Procedemos a leer el archivo de datos y cargamos las librerías necesarias.
+
+Pimero leemos el archivo evolucion_bitcoin_2013_2024_2.csv con la función read.csv. El archivo está en formato inglés separado por comas, por lo que esa función nos sirve:
+
+```{r}
+bitcoin_data <- read.csv("evolucion_bitcoin_2013_2024_2.csv", header = TRUE)
+bitcoin_data$fecha <- as.Date(bitcoin_data$fecha, format = "%Y-%m-%d")
+
+# Instalamos las librerías necesarias, si no lo estuvieran ya
+if (!require("ggplot2", quietly = TRUE)) {
+  install.packages("ggplot2")
+}
+if (!require("dplyr", quietly = TRUE)) {
+  install.packages("dplyr")
+}
+if (!require("hrbrthemes", quietly = TRUE)) {
+  install.packages("hrbrthemes")
+}
+
+# Usamos librerías
+library(ggplot2)
+library(dplyr)
+library(hrbrthemes)
+```
+
+## - Generar el diagrama Connected Scatterplot
+
+En segundo lugar, instalamos las librerías (si no lo estuvieran ya) y generamos el gráfico Connected Scatterplot
+
+```{r, fig.width=12, fig.height=9}
+# Connected Scatterplot con ggplot
+bitcoin_data %>%
+  tail(24) %>%
+  ggplot( aes(x=fecha, y=valor)) +
+    geom_line( color="blue") +
+    geom_point(shape=21, color="black", fill="red", size=5) +
+    theme_ipsum() +
+    ggtitle("Evolución del precio del bitcoin 2013-2024") +
+    theme(plot.title = element_text(hjust = 0.5, color = "red", size = 22))
+```
+
+# - Arc Diagram
+
+En este apartado vamos a hablar del gráfico Arc Diagram
+
+## - Carga de librerías
+
+Procedemos cargamos las librerías necesarias.
+
+```{r}
+# instalamos librerías, si no lo estuvieran ya
+if (!require("devtools", quietly = TRUE)) {
+  install.packages("devtools")
+}
+if (!require("remotes", quietly = TRUE)) {
+  install.packages("remotes")
+}
+remotes::install_github("gastonstat/arcdiagram")
+if (!require("igraph", quietly = TRUE)) {
+  install.packages("igraph")
+}
+
+# Cargamos librerías
+library(devtools)
+library(arcdiagram)
+library(igraph)
+```
+
+## - Generamos conjunto de datos con relaciones entre ellos
+
+En segundo lugar, generamos un conjunto de datos (nodos) con conexiones aleatorias entre ellos, para poder generar posteriormente el gráfico:
+
+```{r}
+# Definimos el número de nodos
+num_nodos <- 12
+
+# Generamos un orden aleatorio de los nodos
+orden_aleatorio <- sample(1:num_nodos)
+
+# Creamos un grafo estrella con el orden aleatorio de nodos
+star_graph <- graph.star(num_nodos, mode = "out", center = orden_aleatorio[1])
+
+# Asignamos nombres a los nodos
+V(star_graph)$name <- paste("Alumno", 1:num_nodos)
+
+# Creamos conexiones adicionales entre nodos de forma aleatoria
+num_conexiones_adicionales <- 8  
+
+for (i in 1:num_conexiones_adicionales) {
+  nodo_origen <- sample(1:num_nodos, 1)
+  nodo_destino <- sample(1:num_nodos, 1)
+  while (nodo_destino == nodo_origen || are.connected(star_graph, nodo_origen, nodo_destino)) {
+    nodo_destino <- sample(1:num_nodos, 1)
+  }
+  star_graph <- star_graph + edge(nodo_origen, nodo_destino)
+}
+
+# Extraemos la lista de aristas
+star_edges <- get.edgelist(star_graph)
+
+# Inspeccionamos el conjunto de datos generado
+print(star_edges)
+```
+
+## - Generar el diagrama Arc Diagram
+
+Por último, generamos el gráfico Arc Diagram
+
+```{r, fig.width=12, fig.height=9}
+# Generamos el Arc Diagram para el conjunto de datos
+set.seed(120)
+arcplot(star_edges, ordering = orden_aleatorio, labels = V(star_graph)$name,
+        lwd.arcs = 4 * runif(num_nodos, .5, 2), col.arcs = hsv(runif(num_nodos - 1, 0.6, 0.8), alpha = 0.4),
+        show.nodes = TRUE, pch.nodes = 21, cex.nodes = runif(num_nodos, 1, 3), 
+        col.nodes = "black", bg.nodes = "red", lwd.nodes = 2)
+# Agregar título al gráfico
+title(main = "Diagrama de Arcos vertical para las conexiones de los Alumnos", cex.main = 1.5)
+
+# Generamos el Arc Diagram para el conjunto de datos
+set.seed(120)
+op = par(mar = c(0.5, 5, 0.5, 3))
+arcplot(star_edges, ordering = orden_aleatorio, horizontal=FALSE, labels = V(star_graph)$name,
+        lwd.arcs = 4 * runif(num_nodos, .5, 2), col.arcs = hsv(runif(num_nodos - 1, 0.6, 0.8), alpha = 0.4),
+        show.nodes = TRUE, pch.nodes = 21, cex.nodes = runif(num_nodos, 1, 3), 
+        col.nodes = "black", bg.nodes = "red", lwd.nodes = 2)
+# Agregar título al gráfico
+title(main = "Diagrama de Arcos horizontal para las conexiones de los Alumnos", cex.main = 1.5)
+
+```
+
+
+# - Cartogramas
+
+En este apartado vamos a hablar del Cartograma
+
+## - Cargamos las librerías
+
+Procedemos a leer el archivo de datos y cargamos las librerías necesarias.
+
+```{r}
+
+# instalamos librerías, si no lo estuvieran ya
+if (!require("sf", quietly = TRUE)) {
+  install.packages("sf")
+}
+if (!require("dplyr", quietly = TRUE)) {
+  install.packages("dplyr")
+}
+if (!require("ggplot2", quietly = TRUE)) {
+  install.packages("ggplot2")
+}
+if (!require("mapSpain", quietly = TRUE)) {
+  install.packages("mapSpain")
+}
+if (!require("cartogram", quietly = TRUE)) {
+  install.packages(cartogram)
+}
+if (!require("RColorBrewer", quietly = TRUE)) {
+  install.packages(RColorBrewer)
+}
+
+# Cartograma con ggplot2
+
+library(sf)
+library(dplyr)
+library(ggplot2)
+library(mapSpain)
+library(cartogram)
+library(RColorBrewer)
+```
+
+
+## - Generamos los datos necesarios para los Cartograms
+
+En segundo lugar cargamos los datos
+
+```{r}
+# Cartograma con ggplot2
+
+# Datos
+prov <- esp_get_prov() %>%
+  mutate(name = prov.shortname.en) %>%
+  select(name, cpro)
+
+# Cambiar el CRS
+prov_3857 <- st_transform(prov, 3857)
+
+# Agregar
+pob_provincias <- mapSpain::pobmun19 %>%
+  group_by(cpro) %>%
+  summarise(n_pop = sum(pob19))
+
+prov_3857_datos <- prov_3857 %>%
+  left_join(pob_provincias, by = c("cpro"))
+
+# Función de etiquetado
+label_fun <- function(breaks) {
+  labels <- breaks / 1000000
+  return(labels)
+}
+
+# Datos Cartograma Dorling
+
+prov_3857_datos_cartog_dorling <-
+  cartogram_dorling(prov_3857_datos,
+                    weight = "n_pop")
+```
+
+## - Generamos el diagrama Cartograms
+
+Finalmente, generamos el Cartograma con la librería ggplot2
+
+```{r, fig.width=12, fig.height=9}
+# Cartograma con ggplot2
+
+# Mapa provicias
+ggplot(prov_3857) +
+  geom_sf()
+
+ggplot(prov_3857_datos_cartog_dorling) +
+  geom_sf(aes(fill = n_pop), color = "grey50") +
+  geom_sf_text(aes(label = name), size = 3, colour = "black") +  
+  scale_fill_gradientn(
+    colours = brewer.pal(9, "Spectral"),
+    labels = label_fun,
+    n.breaks = 15,
+    guide = guide_colorsteps(
+      barwidth = 45,
+      barheight = 0.5,
+      title = "millones",
+      title.position = "right",
+      title.vjust = 0.1)) +
+  theme_void() +
+  theme(legend.position = "top",
+        legend.margin = margin(t = 10, b = 2),
+        legend.title = element_text(size = 7),
+        legend.text = element_text(angle = 45,
+                                   margin = margin(t = 5))) +
+  labs(title = "Cartograma Dorling - Población en España por provincia (2019)")  +
+    theme(plot.title = element_text(hjust = 0.5, color = "orange", size = 22))
+```
+
+
+******
+# Recursos de programación y bibliografía {.unnumbered}
+
+* Incluimos en este apartado una lista de recursos de programación y bibliografía empleada para realizar esta PEC2 de la asignatura de Visualización de datos:
+
+  + [Material teórico del aula: Análisis Estadístico](https://aula.uoc.edu/courses/35333/pages/recursos-de-aprendizaje-a1?module_item_id=1317051)
+  + [Espacio de recursos UOC para ciencia de datos](http://datascience.recursos.uoc.edu/es/)
+  + [Buscador de código R](https://rseek.org/)  
+  + [Colección de cheatsheets en R](https://www.rstudio.com/resources/cheatsheets/)  
+  + [Cartogramas en ggplot2](https://r-charts.com/es/espacial/cartograma-ggplot2/) 
+  + [Arcdiagram en R](https://github.com/gastonstat/arcdiagram)
+  + [Connected scatterplot with R and ggplot2](https://r-graph-gallery.com/connected_scatterplot_ggplot2.html)
+  + [Dataviz catalogue](https://datavizcatalogue.com/)
+  + [Dataviz Project](https://datavizproject.com)
+  + [Data to Viz](https://www.data-to-viz.com/)
+
+*** 
+
+
+
+
+
+
+
