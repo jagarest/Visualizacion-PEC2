@@ -3,7 +3,7 @@
 **Título de la PEC2**: Estudio de técnicas de visualización de datos
 
 Esta PEC se ha realizado bajo el contexto de la asignatura Visualización de datos, perteneciente al Máster en Ciencia de Datos de la Universitat Oberta de Catalunya. En ella, se han creado tres pequeñas visualizaciones usando técnicas diferentes.
-## Integrantes de la práctica
+## Integrantes de la PEC
 Esta PEC ha sido realizada por un único integrante:
 + Javier García Esteban
 ## Archivos del repositorio
