@@ -8,17 +8,40 @@ Esta PEC ha sido realizada por un único integrante:
 + Javier García Esteban
 ## Archivos del repositorio
 Las carpetas y archivos disponibles en el repositorio son:
-+ Carpeta **main/source**: Contiene el código R implementado para la obtención de los datos y generación de las visualizaciones.
++ Carpeta **main/source**: Contiene el código R implementado para la obtención de los datos y generación de las visualizaciones, además de los ficheros necesarios para ejecutar el script.
 + Archivo **main/README.md**: documento que contiene toda la información relevante del repositorio y para ejecutar la PEC.
-+ Archivo **main/requirements.txt**: archivo con las librerías necesarias para ejecutar el código.
++ Archivo **main/Garcia_Esteban_Diagramas.html**: archivo con las visualizaciones generadas en código HTML.
+## Cómo ver las visualizaciones
+Acceder al siguiente enlace:
++ [3 Ejemplos Gráficos de Visualización de datos](https://htmlpreview.github.io/?https://github.com/jagarest/Visualizacion-PEC2/blob/main/Garcia_Esteban_Diagramas.html)
+
 ## Cómo usar el código generado en R
 Para usar el código fuente, hay que abrir en RStudio el siguiente código fuente:
-+ **main/source/M2.851_PRA1_Angela_Martin_y_Javier_Garcia.rmd**: Fichero ejecutable en R. Inicia el proceso de scraping.
++ **main/source/Garcia_Esteban_Diagramas.rmd**: Fichero ejecutable en R. Inicia el proceso de generación de gráficos.
+
 El código tiene las siguientes librerías que se Instalarán, en caso de que no estén instaladas ya:
 ```{r}
-library(rvest)
+library(ggplot2)
+library(dplyr)
+library(hrbrthemes)
+library(devtools)
+library(arcdiagram)
+library(igraph)
+library(sf)
+library(mapSpain)
+library(cartogram)
+library(RColorBrewer)
 ```
-Para ejecutar el script, basta con ejecutar en R el archivo, que generará un fichero Datos_imdb.csv con el dataset resultante.
+Para ejecutar el script, basta con ejecutar en R el archivo, que generará un fichero Garcia_Esteban_Diagramas.html con las visualizaciones resultantes.
 ## Recursos y Bibliografía
-A continuación ponemos el link al dataset publicado en Zenodo:
-https://zenodo.org/
+Incluimos en este apartado una lista de recursos de programación y bibliografía empleada para realizar esta PEC2 de la asignatura de Visualización de datos:
+  + [Material teórico del aula: Visualización de datos](https://aula.uoc.edu/courses/35558)
+  + [Espacio de recursos UOC para ciencia de datos](http://datascience.recursos.uoc.edu/es/)
+  + [Buscador de código R](https://rseek.org/)  
+  + [Colección de cheatsheets en R](https://www.rstudio.com/resources/cheatsheets/)  
+  + [Cartogramas en ggplot2](https://r-charts.com/es/espacial/cartograma-ggplot2/) 
+  + [Arcdiagram en R](https://github.com/gastonstat/arcdiagram)
+  + [Connected scatterplot with R and ggplot2](https://r-graph-gallery.com/connected_scatterplot_ggplot2.html)
+  + [Dataviz catalogue](https://datavizcatalogue.com/)
+  + [Dataviz Project](https://datavizproject.com)
+  + [Data to Viz](https://www.data-to-viz.com/)
